@@ -45,8 +45,6 @@ const actions = {
     const baseInfo = await getUserDetailById(res.userId) // 获取头像
     const baseResult = { ...res, ...baseInfo } // 合并资料
     context.commit('setUserInfo', baseResult) // 提交到mutations
-    console.log(res)
-    console.log(baseResult)
     return baseResult // 这里为什么要return呢 这里给我们后期做权限的时候留下的伏笔
   }
 }
