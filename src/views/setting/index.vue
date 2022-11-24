@@ -32,9 +32,21 @@
               <el-table-column label="操作" align="center">
                 <!-- 作用域插槽 -->
                 <template slot-scope="{ row }">
-                  <el-button size="small" type="success">分配权限</el-button>
-                  <el-button size="small" type="primary" @click="editRole(row.id)">修改</el-button>
-                  <el-button size="small" type="danger" @click="removeRole(row.id)">删除</el-button>
+                  <el-button
+                    size="small"
+                    type="success"
+                    @click="assignPerm(row.id)"
+                  >分配权限</el-button>
+                  <el-button
+                    size="small"
+                    type="primary"
+                    @click="editRole(row.id)"
+                  >修改</el-button>
+                  <el-button
+                    size="small"
+                    type="danger"
+                    @click="removeRole(row.id)"
+                  >删除</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -93,13 +105,43 @@
         </el-tabs>
       </el-card>
     </div>
-    <AddRoles ref="addRole" :show-dialog.sync="showDialog" @addRoles="getRoleList" />
+    <AddRoles
+      ref="addRole"
+      :show-dialog.sync="showDialog"
+      @addRoles="getRoleList"
+    />
+    <!-- 放置弹层 -->
+    <el-dialog :visible="showPerDialog" title="分配权限" @close="btnCancle">
+      <!-- 权限是一颗树 -->
+      <!-- 将数据绑定到组件上 -->
+      <!-- check-strictly 如果为true 纳表示父子勾选时不互相关联 反之则互相关联 -->
+      <!-- id作为唯一标识 -->
+      <el-tree
+        ref="permTree"
+        node-key="id"
+        :data="permData"
+        :props="defaultProps"
+        :default-expand-all="true"
+        :show-checkbox="true"
+        :check-strictly="true"
+        :default-checked-keys="permIds"
+      />
+      <el-row type="flex" justify="center">
+        <el-col :span="6">
+          <!-- 确定 取消 -->
+          <el-button type="primary" size="small" @click="btnOk">确定</el-button>
+          <el-button size="small" @click="btnCancle">取消</el-button>
+        </el-col>
+      </el-row>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { getRoleList, getCompanyInfo, removeRoleList } from '@/api/setting'
+import { getRoleDetail, getRoleList, getCompanyInfo, removeRoleList, assignPerm } from '@/api/setting'
+import { getPermissionList } from '@/api/permission'
 import AddRoles from './components/add-roles.vue'
+import { tranListToTreeDate } from '@/utils'
 export default {
   components: {
     AddRoles
@@ -113,8 +155,15 @@ export default {
         pagesize: 2,
         total: 0 // 记录总数
       },
+      permData: [], // 接收权限数据
+      defaultProps: {
+        label: 'name'
+      }, // 定义显示字段的名称 和 子属性的字段名称
       companyInfo: {},
-      showDialog: false
+      showDialog: false,
+      showPerDialog: false,
+      userId: null, // 用来记录当前分配权限的id
+      permIds: []
     }
   },
   created() {
@@ -162,6 +211,23 @@ export default {
     },
     showD() {
       this.showDialog = true
+    },
+    async assignPerm(id) {
+      this.permData = tranListToTreeDate(await getPermissionList(), '0') // 转化list到树形数据
+      this.userId = id
+      // 获取这个id的权限点
+      const { permIds } = await getRoleDetail(id)
+      this.permIds = permIds
+      console.log(permIds)
+      this.showPerDialog = true
+    },
+    async btnOk() {
+      await assignPerm({ permIds: this.$refs.permTree.getCheckedKeys(), id: this.userId })
+      this.$message.success('权限分配成功')
+      this.showPerDialog = false
+    },
+    btnCancle() {
+      this.showPerDialog = false
     }
   }
 }

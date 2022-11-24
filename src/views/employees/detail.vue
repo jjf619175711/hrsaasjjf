@@ -22,10 +22,24 @@
             <!-- 登录账户设置 -->
             <!-- <UserInfo /> -->
             <!-- 动态组件 可以切换组件 is必须是变量 -->
-            <component :is="userComponet" :num="num" />
+            <el-row type="flex" justify="end">
+              <el-tooltip content="打印个人基本信息">
+                <router-link :to="`/employees/print/${userId}?type=personal`">
+                  <i class="el-icon-printer" />
+                </router-link>
+              </el-tooltip>
+            </el-row>
+            <component :is="userComponet" />
           </el-tab-pane>
           <el-tab-pane label="岗位信息">
             <!-- 登录账户设置 -->
+            <el-row type="flex" justify="end">
+              <el-tooltip content="打印个人基本信息">
+                <router-link :to="`/employees/print/${userId}?type=jobs`">
+                  <i class="el-icon-printer" />
+                </router-link>
+              </el-tooltip>
+            </el-row>
             <component :is="JobComponet" />
           </el-tab-pane>
         </el-tabs>

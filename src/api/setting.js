@@ -17,3 +17,6 @@ export const getRoleDetail = id => request.get(`/sys/role/${id}`)
 
 // 更新角色
 export const updateRoleDetail = data => request.put(`/sys/role/${data.id}`, data)
+
+// 给角色分配权限
+export const assignPerm = data => request.put('/sys/role/assignPerm', data)

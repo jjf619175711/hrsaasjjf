@@ -29,3 +29,6 @@ export const getJobDetail = id => request.get(`/employees/${id}/jobs`)
 
 // 保存员工岗位信息
 export const saveJobDetail = data => request.put(`/employees/${data.userId}/jobs`, data)
+
+// 给员工分配角色
+export const assignRoles = data => request.put('/sys/user/assignRoles', data)

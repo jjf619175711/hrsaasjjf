@@ -53,12 +53,12 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <!-- 员工照片 -->
+      <!-- 员工头像 -->
       <el-row class="inline-info">
         <el-col :span="12">
           <el-form-item label="员工头像">
             <!-- 放置上传图片 -->
-
+            <ImageUpload ref="staffPhoto" />
           </el-form-item>
         </el-col>
       </el-row>
@@ -90,6 +90,7 @@
 
         <el-form-item label="员工照片">
           <!-- 放置上传图片 -->
+          <ImageUpload ref="photo" />
         </el-form-item>
         <el-form-item label="国家/地区">
           <el-select v-model="formData.nationalArea" class="inputW2">
@@ -287,9 +288,6 @@ import EmployeeEnum from '@/api/constant/employees'
 import { getUserDetailById } from '@/api/user'
 import { getPersonalDetail, savePersonalDetail, saveUserDetailById } from '@/api/employees'
 export default {
-  props: {
-
-  },
   data() {
     return {
       userId: this.$route.params.id,
@@ -368,20 +366,36 @@ export default {
     // 获取员工个人信息
     async getUserDetailById() {
       this.userInfo = await getUserDetailById(this.userId)
+      if (this.userInfo.staffPhoto && this.userInfo.staffPhoto.trim()) {
+        // 如果有值 表示有了一个上传成功的图片了
+        // 上传成功的图片 upload:true
+        this.$refs.staffPhoto.fileList = [{ url: this.userInfo.staffPhoto, upload: true }]
+      }
+      // console.log(this.userInfo)
     },
     // 获取员工基本信息
     async getPersonalDetail() {
       this.formData = await getPersonalDetail(this.userId)
-      console.log(this.formData)
+      if (this.formData.staffPhoto && this.formData.staffPhoto.trim()) {
+        this.$refs.photo.fileList = [{ url: this.formData.staffPhoto, upload: true }]
+      }
     },
     // 保存员工信息
     async saveUser() {
-      await saveUserDetailById(this.userInfo)
+      const fileList = this.$refs.staffPhoto.fileList
+      if (fileList.some(item => !item.upload)) {
+        return this.$message.warning('图片未上传完成')
+      }
+      await saveUserDetailById({ ...this.userInfo, staffPhoto: fileList && fileList.length ? fileList[0].url : ' ' })
       this.$message.success('保存用户基本信息成功')
     },
     // 保存员工基本信息
     async savePersonal() {
-      await savePersonalDetail(this.formData)
+      const fileList = this.$refs.photo.fileList
+      if (fileList.some(item => !item.upload)) {
+        return this.$message.error('图片未上传完成')
+      }
+      await savePersonalDetail({ ...this.formData, staffPhoto: fileList && fileList.length ? fileList[0].url : ' ' })
       this.$message.success('保存用户基础信息成功')
     }
   }
