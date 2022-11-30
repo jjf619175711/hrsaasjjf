@@ -44,7 +44,7 @@ export default {
   },
   methods: {
     async getRoleList() {
-      const { rows } = await getRoleList({ page: 1, pagesize: 10 })
+      const { rows } = await getRoleList({ page: 1, pagesize: 30 })
       this.roleList = rows
       console.log(rows)
     },

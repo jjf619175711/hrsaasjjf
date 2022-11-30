@@ -10,6 +10,7 @@ export default {
       // 二级路由的path什么都不用写的时候，此时它表示二级路由的默认路由
       path: '', // 这里不用谢 什么都不用写表示 /employess  不但有布局 layout => 员工主页
       component: () => import('@/views/setting'),
+      name: 'setting',
       // 路由的元信息，气势就是一个储存数据的地方 可以放任何内容
       meta: {
         title: '公司设置',

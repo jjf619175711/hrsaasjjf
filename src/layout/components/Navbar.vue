@@ -12,9 +12,15 @@
     <!-- <breadcrumb class="breadcrumb-container" /> -->
 
     <div class="right-menu">
+      <!-- 切换语言 -->
+      <lang class="right-menu-item" />
+      <!-- 全屏插件 -->
+      <screen-full class="right-menu-item" />
+      <!-- 切换主体组件  -->
+      <theme-picker class="right-menu-item themePicker" />
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <img v-imageerror="defaultImg" :src="staffPhoto" class="user-avatar">
+          <img v-imagerror="defaultImg" :src="staffPhoto" class="user-avatar">
           <span class="name">{{ name }}</span>
           <i class="el-icon-caret-bottom" style="color: #fff" />
         </div>
@@ -123,7 +129,7 @@ export default {
       height: 100%;
       font-size: 18px;
       color: #5a5e66;
-      vertical-align: text-bottom;
+      vertical-align: middle;
 
       &.hover-effect {
         cursor: pointer;
@@ -133,6 +139,10 @@ export default {
           background: rgba(0, 0, 0, 0.025);
         }
       }
+    }
+    .themePicker{
+      margin-top: 11px;
+      vertical-align: middle;
     }
 
     .avatar-container {
