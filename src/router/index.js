@@ -92,7 +92,8 @@ export const asyncRoutes = [
   socialRouter
 ]
 const createRouter = () => new Router({
-  // mode: 'history', // require service support
+  mode: 'history', // require service support
+  base: 'hr/',
   scrollBehavior: () => ({ y: 0 }),
   routes: [...constantRoutes] // 静态路由和动态路由临时合并
 })
